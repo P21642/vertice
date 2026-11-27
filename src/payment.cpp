@@ -2,10 +2,12 @@
 
 # include <cstdio>
 # include <cstring>
+# include <strings.h>
+# include <cstdlib>
 
 # define KEY_SIZE 128
 
-static const char PAYMENT_KEY[] = "sk_live_ImVvrDfWpMmdcJeKLS5ycAGapjUD1zwP";
+ const char *env_key = getenv("PAYMENT_KEY");
 
 /* Simula o gateway de pagamentos, que aceita o pagamento quando a chave foi informada e o valor é positivo. */
 static bool gatewayAuthorize(const char *key, double amount)
@@ -19,8 +21,8 @@ bool processPayment(double amount)
     char key[KEY_SIZE];
     bool authorized;
 
-    snprintf(key, sizeof key, "%s", PAYMENT_KEY);
+    snprintf(key, sizeof key, "%s", env_key != nullptr ? env_key : "");
     authorized = gatewayAuthorize(key, amount);
-    memset(key, 0, sizeof key);
+    explicit_bzero(key, sizeof key);
     return authorized;
 }
